@@ -1,0 +1,40 @@
+name: Build DragonBlockInfinity
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Dar permissão ao Gradlew
+        run: chmod +x ./gradlew
+
+      - name: Rodar genSources
+        run: ./gradlew genSources --stacktrace
+
+      - name: Fazer o Build
+        run: ./gradlew build --stacktrace
+
+      - name: Mostrar JARs gerados
+        run: ls -R build/libs
+
+      - name: Upload do Mod (artefato)
+        uses: actions/upload-artifact@v4
+        with:
+          name: DragonBlockInfinity-Build
+          path: build/libs/*.jar

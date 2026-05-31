@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "dragonblockascension",
+  "version": "${version}",
+  "name": "Dragon Block Ascension",
+  "description": "A Fabric mod for Minecraft 1.20.1",
+  "authors": [
+    "Bernardo"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Bernardo-Drago/Dragon-Block-Ascension",
+    "sources": "https://github.com/Bernardo-Drago/Dragon-Block-Ascension"
+  },
+  "license": "LICENSE",
+  "icon": "assets/dragonblockascension/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bernardo.dragonblockascension.DragonBlockAscension"
+    ],
+    "client": [
+      "com.bernardo.dragonblockascension.client.DragonBlockAscensionClient"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "java": "${java_version}"
+  }
+}

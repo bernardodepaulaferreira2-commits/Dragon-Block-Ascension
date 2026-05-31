@@ -1,0 +1,1187 @@
+Project export from /workspaces/Dragon-Block-Ascension
+
+==== ./LICENSE ====
+Creative Commons Legal Code
+
+CC0 1.0 Universal
+
+    CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
+    LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN
+    ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+    INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+    REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS
+    PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM
+    THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED
+    HEREUNDER.
+
+Statement of Purpose
+
+The laws of most jurisdictions throughout the world automatically confer
+exclusive Copyright and Related Rights (defined below) upon the creator
+and subsequent owner(s) (each and all, an "owner") of an original work of
+authorship and/or a database (each, a "Work").
+
+Certain owners wish to permanently relinquish those rights to a Work for
+the purpose of contributing to a commons of creative, cultural and
+scientific works ("Commons") that the public can reliably and without fear
+of later claims of infringement build upon, modify, incorporate in other
+works, reuse and redistribute as freely as possible in any form whatsoever
+and for any purposes, including without limitation commercial purposes.
+These owners may contribute to the Commons to promote the ideal of a free
+culture and the further production of creative, cultural and scientific
+works, or to gain reputation or greater distribution for their Work in
+part through the use and efforts of others.
+
+For these and/or other purposes and motivations, and without any
+expectation of additional consideration or compensation, the person
+associating CC0 with a Work (the "Affirmer"), to the extent that he or she
+is an owner of Copyright and Related Rights in the Work, voluntarily
+elects to apply CC0 to the Work and publicly distribute the Work under its
+terms, with knowledge of his or her Copyright and Related Rights in the
+Work and the meaning and intended legal effect of CC0 on those rights.
+
+1. Copyright and Related Rights. A Work made available under CC0 may be
+protected by copyright and related or neighboring rights ("Copyright and
+Related Rights"). Copyright and Related Rights include, but are not
+limited to, the following:
+
+  i. the right to reproduce, adapt, distribute, perform, display,
+     communicate, and translate a Work;
+ ii. moral rights retained by the original author(s) and/or performer(s);
+iii. publicity and privacy rights pertaining to a person's image or
+     likeness depicted in a Work;
+ iv. rights protecting against unfair competition in regards to a Work,
+     subject to the limitations in paragraph 4(a), below;
+  v. rights protecting the extraction, dissemination, use and reuse of data
+     in a Work;
+ vi. database rights (such as those arising under Directive 96/9/EC of the
+     European Parliament and of the Council of 11 March 1996 on the legal
+     protection of databases, and under any national implementation
+     thereof, including any amended or successor version of such
+     directive); and
+vii. other similar, equivalent or corresponding rights throughout the
+     world based on applicable law or treaty, and any national
+     implementations thereof.
+
+2. Waiver. To the greatest extent permitted by, but not in contravention
+of, applicable law, Affirmer hereby overtly, fully, permanently,
+irrevocably and unconditionally waives, abandons, and surrenders all of
+Affirmer's Copyright and Related Rights and associated claims and causes
+of action, whether now known or unknown (including existing as well as
+future claims and causes of action), in the Work (i) in all territories
+worldwide, (ii) for the maximum duration provided by applicable law or
+treaty (including future time extensions), (iii) in any current or future
+medium and for any number of copies, and (iv) for any purpose whatsoever,
+including without limitation commercial, advertising or promotional
+purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each
+member of the public at large and to the detriment of Affirmer's heirs and
+successors, fully intending that such Waiver shall not be subject to
+revocation, rescission, cancellation, termination, or any other legal or
+equitable action to disrupt the quiet enjoyment of the Work by the public
+as contemplated by Affirmer's express Statement of Purpose.
+
+3. Public License Fallback. Should any part of the Waiver for any reason
+be judged legally invalid or ineffective under applicable law, then the
+Waiver shall be preserved to the maximum extent permitted taking into
+account Affirmer's express Statement of Purpose. In addition, to the
+extent the Waiver is so judged Affirmer hereby grants to each affected
+person a royalty-free, non transferable, non sublicensable, non exclusive,
+irrevocable and unconditional license to exercise Affirmer's Copyright and
+Related Rights in the Work (i) in all territories worldwide, (ii) for the
+maximum duration provided by applicable law or treaty (including future
+time extensions), (iii) in any current or future medium and for any number
+of copies, and (iv) for any purpose whatsoever, including without
+limitation commercial, advertising or promotional purposes (the
+"License"). The License shall be deemed effective as of the date CC0 was
+applied by Affirmer to the Work. Should any part of the License for any
+reason be judged legally invalid or ineffective under applicable law, such
+partial invalidity or ineffectiveness shall not invalidate the remainder
+of the License, and in such case Affirmer hereby affirms that he or she
+will not (i) exercise any of his or her remaining Copyright and Related
+Rights in the Work or (ii) assert any associated claims and causes of
+action with respect to the Work, in either case contrary to Affirmer's
+express Statement of Purpose.
+
+4. Limitations and Disclaimers.
+
+ a. No trademark or patent rights held by Affirmer are waived, abandoned,
+    surrendered, licensed or otherwise affected by this document.
+ b. Affirmer offers the Work as-is and makes no representations or
+    warranties of any kind concerning the Work, express, implied,
+    statutory or otherwise, including without limitation warranties of
+    title, merchantability, fitness for a particular purpose, non
+    infringement, or the absence of latent or other defects, accuracy, or
+    the present or absence of errors, whether or not discoverable, all to
+   Direitos Reservados — Licença Proprietária Restritiva
+
+   Copyright (c) [2026] [Bernardo]
+
+   Todos os direitos reservados. Este repositório, incluindo, sem limitação,
+   todo código-fonte, arquivos de configuração, recursos (texturas, imagens,
+   ícones), assets, documentação e quaisquer outros conteúdos fornecidos aqui
+   doravante denominados "Obra(s)", são propriedade exclusiva do titular do
+   direito indicado acima.
+
+   É estritamente proibido, sem autorização prévia e por escrito do titular dos
+   direitos:
+
+   - Copiar, reproduzir, distribuir, sublicenciar, transmitir ou disponibilizar
+      publicamente as Obras;
+   - Modificar, adaptar, traduzir, criar obras derivadas ou realizar engenharia
+      reversa das Obras;
+   - Utilizar as Obras (ou partes delas) em outros projetos, produtos,
+      serviços ou mídias, incluindo a incorporação de texturas/assets em jogos
+      ou software de terceiros;
+   - Extrair, reutilizar ou redistribuir quaisquer texturas, imagens ou
+      recursos gráficos aqui contidos.
+
+   Qualquer uso, reprodução ou modificação das Obras sem a autorização
+   prévia e expressa do titular constitui violação de direitos autorais e
+   estará sujeita às medidas legais cabíveis.
+
+   Se você precisa de permissão para usar, modificar ou redistribuir qualquer
+   parte deste projeto, entre em contato com o titular dos direitos:
+
+      [bernardopf2011@gmail.com]
+
+   ISENÇÃO DE RESPONSABILIDADE: Esta licença é um documento elaborado para
+   proteger o titular contra usos não autorizados. Este texto não constitui
+   assessoria jurídica. Para garantir plena validade legal e adaptar a licença
+   ao seu caso específico (jurisdição, colaboração de terceiros, contribuições
+   anteriores), recomenda-se consultar um advogado especializado em propriedade
+   intelectual.
+
+   Última alteração: [16/05/2026]
+
+==== ./README.md ====
+# Fabric Example Mod
+
+## Setup
+
+For setup instructions please see the [fabric documentation page](https://docs.fabricmc.net/develop/getting-started/setting-up) that relates to the IDE that you are using.
+
+## License
+
+This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+
+
+==== ./build.gradle ====
+plugins {
+    id 'fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven { url 'https://maven.fabricmc.net/' }
+    mavenCentral()
+
+    maven {
+        name = "GeckoLib"
+        url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
+    }
+
+    maven {
+        name = "Ladysnake Mods"
+        url = "https://maven.ladysnake.org/releases"
+    }
+}
+
+loom {
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // libgui
+    modImplementation files("lib/LibGui-8.1.1+1.20.1.jar")
+
+    // GeckoLib Fabric 1.20.1
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.20.1:4.4.9"
+
+    // Cardinal Components
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.2"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.2"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "java_version", JavaVersion.VERSION_17.toString()
+
+    filesMatching("fabric.mod.json") {
+        expand "version": inputs.properties.version,
+               "minecraft_version": inputs.properties.minecraft_version,
+               "java_version": inputs.properties.java_version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+jar {
+    inputs.property "archivesName", project.base.archivesName
+
+    from("LICENSE") {
+        rename { "${it}_${inputs.properties.archivesName}" }
+    }
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
+            from components.java
+        }
+    }
+    repositories {
+    }
+}
+
+
+==== ./gradle.properties ====
+org.gradle.jvmargs=-Xmx1G
+org.gradle.parallel=true
+org.gradle.configuration-cache=false
+
+# Fabric Properties
+minecraft_version=1.20.1
+loader_version=0.15.11
+loom_version=1.10-SNAPSHOT
+
+# Mod Properties
+mod_version=0.0.1
+maven_group=com.bernardo.dragonblockascension
+archives_base_name=Dragon Block Ascension
+
+# Dependencies
+fabric_version=0.92.2+1.20.1
+
+
+==== ./gradle/wrapper/gradle-wrapper.properties ====
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.1.0-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+
+
+==== ./gradlew ====
+#!/bin/sh
+
+#
+# Copyright © 2015 the original authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+##############################################################################
+#
+#   Gradle start up script for POSIX generated by Gradle.
+#
+#   Important for running:
+#
+#   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
+#       noncompliant, but you have some other compliant shell such as ksh or
+#       bash, then to run this script, type that shell name before the whole
+#       command line, like:
+#
+#           ksh Gradle
+#
+#       Busybox and similar reduced shells will NOT work, because this script
+#       requires all of these POSIX shell features:
+#         * functions;
+#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
+#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
+#         * compound commands having a testable exit status, especially «case»;
+#         * various built-in commands including «command», «set», and «ulimit».
+#
+#   Important for patching:
+#
+#   (2) This script targets any POSIX shell, so it avoids extensions provided
+#       by Bash, Ksh, etc; in particular arrays are avoided.
+#
+#       The "traditional" practice of packing multiple parameters into a
+#       space-separated string is a well documented source of bugs and security
+#       problems, so this is (mostly) avoided, by progressively accumulating
+#       options in "$@", and eventually passing that to Java.
+#
+#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
+#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
+#       see the in-line comments for details.
+#
+#       There are tweaks for specific operating systems such as AIX, CygWin,
+#       Darwin, MinGW, and NonStop.
+#
+#   (3) This script is generated from the Groovy template
+#       https://github.com/gradle/gradle/blob/HEAD/platforms/jvm/plugins-application/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+#       within the Gradle project.
+#
+#       You can find Gradle at https://github.com/gradle/gradle/.
+#
+##############################################################################
+
+# Attempt to set APP_HOME
+
+# Resolve links: $0 may be a link
+app_path=$0
+
+# Need this for daisy-chained symlinks.
+while
+    APP_HOME=${app_path%"${app_path##*/}"}  # leaves a trailing /; empty if no leading path
+    [ -h "$app_path" ]
+do
+    ls=$( ls -ld "$app_path" )
+    link=${ls#*' -> '}
+    case $link in             #(
+      /*)   app_path=$link ;; #(
+      *)    app_path=$APP_HOME$link ;;
+    esac
+done
+
+# This is normally unused
+# shellcheck disable=SC2034
+APP_BASE_NAME=${0##*/}
+# Discard cd standard output in case $CDPATH is set (https://github.com/gradle/gradle/issues/25036)
+APP_HOME=$( cd -P "${APP_HOME:-./}" > /dev/null && printf '%s\n' "$PWD" ) || exit
+
+# Use the maximum available, or set MAX_FD != -1 to use that value.
+MAX_FD=maximum
+
+warn () {
+    echo "$*"
+} >&2
+
+die () {
+    echo
+    echo "$*"
+    echo
+    exit 1
+} >&2
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false
+msys=false
+darwin=false
+nonstop=false
+case "$( uname )" in                #(
+  CYGWIN* )         cygwin=true  ;; #(
+  Darwin* )         darwin=true  ;; #(
+  MSYS* | MINGW* )  msys=true    ;; #(
+  NONSTOP* )        nonstop=true ;;
+esac
+
+
+
+# Determine the Java command to use to start the JVM.
+if [ -n "$JAVA_HOME" ] ; then
+    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+        # IBM's JDK on AIX uses strange locations for the executables
+        JAVACMD=$JAVA_HOME/jre/sh/java
+    else
+        JAVACMD=$JAVA_HOME/bin/java
+    fi
+    if [ ! -x "$JAVACMD" ] ; then
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+else
+    JAVACMD=java
+    if ! command -v java >/dev/null 2>&1
+    then
+        die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation."
+    fi
+fi
+
+# Increase the maximum file descriptors if we can.
+if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+    case $MAX_FD in #(
+      max*)
+        # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC2039,SC3045
+        MAX_FD=$( ulimit -H -n ) ||
+            warn "Could not query maximum file descriptor limit"
+    esac
+    case $MAX_FD in  #(
+      '' | soft) :;; #(
+      *)
+        # In POSIX sh, ulimit -n is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC2039,SC3045
+        ulimit -n "$MAX_FD" ||
+            warn "Could not set maximum file descriptor limit to $MAX_FD"
+    esac
+fi
+
+# Collect all arguments for the java command, stacking in reverse order:
+#   * args from the command line
+#   * the main class name
+#   * -classpath
+#   * -D...appname settings
+#   * --module-path (only if needed)
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
+
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if "$cygwin" || "$msys" ; then
+    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+
+    JAVACMD=$( cygpath --unix "$JAVACMD" )
+
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    for arg do
+        if
+            case $arg in                                #(
+              -*)   false ;;                            # don't mess with options #(
+              /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
+                    [ -e "$t" ] ;;                      #(
+              *)    false ;;
+            esac
+        then
+            arg=$( cygpath --path --ignore --mixed "$arg" )
+        fi
+        # Roll the args list around exactly as many times as the number of
+        # args, so each arg winds up back in the position where it started, but
+        # possibly modified.
+        #
+        # NB: a `for` loop captures its iteration list before it begins, so
+        # changing the positional parameters here affects neither the number of
+        # iterations, nor the values presented in `arg`.
+        shift                   # remove old arg
+        set -- "$@" "$arg"      # push replacement arg
+    done
+fi
+
+
+# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+
+# Collect all arguments for the java command:
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and optsEnvironmentVar are not allowed to contain shell fragments,
+#     and any embedded shellness will be escaped.
+#   * For example: A user cannot expect ${Hostname} to be expanded, as it is an environment variable and will be
+#     treated as '${Hostname}' itself on the command line.
+
+set -- \
+        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+        -jar "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" \
+        "$@"
+
+# Stop when "xargs" is not available.
+if ! command -v xargs >/dev/null 2>&1
+then
+    die "xargs is not available"
+fi
+
+# Use "xargs" to parse quoted args.
+#
+# With -n1 it outputs one arg per line, with the quotes and backslashes removed.
+#
+# In Bash we could simply go:
+#
+#   readarray ARGS < <( xargs -n1 <<<"$var" ) &&
+#   set -- "${ARGS[@]}" "$@"
+#
+# but POSIX shell has neither arrays nor command substitution, so instead we
+# post-process each arg (as a line of input to sed) to backslash-escape any
+# character that might be a shell metacharacter, then use eval to reverse
+# that process (while maintaining the separation between arguments), and wrap
+# the whole thing up as a single "set" statement.
+#
+# This will of course break if any of these variables contains a newline or
+# an unmatched quote.
+#
+
+eval "set -- $(
+        printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS" |
+        xargs -n1 |
+        sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
+        tr '\n' ' '
+    )" '"$@"'
+
+exec "$JAVACMD" "$@"
+
+
+==== ./gradlew.bat ====
+@rem
+@rem Copyright 2015 the original author or authors.
+@rem
+@rem Licensed under the Apache License, Version 2.0 (the "License");
+@rem you may not use this file except in compliance with the License.
+@rem You may obtain a copy of the License at
+@rem
+@rem      https://www.apache.org/licenses/LICENSE-2.0
+@rem
+@rem Unless required by applicable law or agreed to in writing, software
+@rem distributed under the License is distributed on an "AS IS" BASIS,
+@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+@rem See the License for the specific language governing permissions and
+@rem limitations under the License.
+@rem
+@rem SPDX-License-Identifier: Apache-2.0
+@rem
+
+@if "%DEBUG%"=="" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+set DIRNAME=%~dp0
+if "%DIRNAME%"=="" set DIRNAME=.
+@rem This is normally unused
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+
+@rem Resolve any "." and ".." in APP_HOME to make it shorter.
+for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
+
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
+
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if %ERRORLEVEL% equ 0 goto execute
+
+echo. 1>&2
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
+echo. 1>&2
+echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+echo location of your Java installation. 1>&2
+
+goto fail
+
+:findJavaFromJavaHome
+set JAVA_HOME=%JAVA_HOME:"=%
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+
+if exist "%JAVA_EXE%" goto execute
+
+echo. 1>&2
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
+echo. 1>&2
+echo Please set the JAVA_HOME variable in your environment to match the 1>&2
+echo location of your Java installation. 1>&2
+
+goto fail
+
+:execute
+@rem Setup the command line
+
+
+
+@rem Execute Gradle
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %*
+
+:end
+@rem End local scope for the variables with windows NT shell
+if %ERRORLEVEL% equ 0 goto mainEnd
+
+:fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code!
+set EXIT_CODE=%ERRORLEVEL%
+if %EXIT_CODE% equ 0 set EXIT_CODE=1
+if not ""=="%GRADLE_EXIT_CONSOLE%" exit %EXIT_CODE%
+exit /b %EXIT_CODE%
+
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
+
+:omega
+
+
+==== ./settings.gradle ====
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Fabric Snapshots'
+            url = 'https://maven.fabricmc.net/'
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/DragonBlockAscension.java ====
+package com.bernardo.dragonblockascension;
+
+import net.fabricmc.api.ModInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DragonBlockAscension implements ModInitializer {
+    public static final String MOD_ID = "dragonblockascension";
+    public static final Logger LOGGER = LoggerFactory.getLogger("DragonBlockAscension");
+
+    @Override
+    public void onInitialize() {
+        LOGGER.info("Dragon Block Ascension carregado.");
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/DragonBlockAscensionClient.java ====
+package com.bernardo.dragonblockascension.client;
+
+import net.fabricmc.api.ClientModInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DragonBlockAscensionClient implements ClientModInitializer {
+    public static final Logger LOGGER = LoggerFactory.getLogger("DragonBlockAscensionClient");
+
+    @Override
+    public void onInitializeClient() {
+        LOGGER.info("Dragon Block Ascension client carregado.");
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerKiComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.onyxstudios.cca.api.v3.component.ComponentV3;
+import net.minecraft.nbt.NbtCompound;
+
+public class PlayerKiComponent implements ComponentV3, AutoSyncedComponent {
+
+    private int ki;
+    private int maxKi;
+    private int kiRegenRate;
+    private int currentKi;
+
+    public PlayerKiComponent() {
+        this.ki = 0;
+        this.maxKi = 100;
+        this.kiRegenRate = 1;
+        this.currentKi = this.maxKi;
+    }
+
+    public int getKi() {
+        return this.ki;
+    }
+
+    public void setKi(int ki) {
+        this.ki = ki;
+        clampKi();
+    }
+
+    private void clampKi() {
+        if (this.ki < 0) {
+            this.ki = 0;
+        }
+
+        if (this.ki > this.maxKi) {
+            this.ki = this.maxKi;
+        }
+
+        if (this.kiRegenRate < 0) {
+            this.kiRegenRate = 0;
+        }
+    }
+
+    public int getMaxKi() {
+        return this.maxKi;
+    }
+
+    public void setMaxKi(int maxKi) {
+        this.maxKi = maxKi;
+        clampKi();
+    }
+
+    public int getKiRegenRate() {
+        return this.kiRegenRate;
+    }
+
+    public void setKiRegenRate(int kiRegenRate) {
+        this.kiRegenRate = kiRegenRate;
+        clampKi();
+    }
+
+    public int getCurrentKi() {
+        return this.currentKi;
+    }
+
+    public void setCurrentKi(int currentKi) {
+        this.currentKi = currentKi;
+        clampCurrentKi();
+    }
+
+    private void clampCurrentKi() {
+        if (this.currentKi < 0) {
+            this.currentKi = 0;
+        }
+
+        if (this.currentKi > this.maxKi) {
+            this.currentKi = this.maxKi;
+        }
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound tag) {
+        this.ki = tag.getInt("Ki");
+        this.maxKi = tag.getInt("MaxKi");
+        this.currentKi = tag.getInt("CurrentKi");
+        this.kiRegenRate = tag.getInt("KiRegenRate");
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound tag) {
+        tag.putInt("Ki", this.ki);
+        tag.putInt("MaxKi", this.maxKi);
+        tag.putInt("CurrentKi", this.currentKi);
+        tag.putInt("KiRegenRate", this.kiRegenRate);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerRaceComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.bernardo.dragonblockascension.race.Race;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import dev.onyxstudios.cca.api.v3.component.ComponentV3;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+
+public class PlayerRaceComponent implements ComponentV3, AutoSyncedComponent {
+    private final PlayerEntity player;
+    private Race race = Race.HUMAN;
+
+    public PlayerRaceComponent(PlayerEntity player) {
+        this.player = player;
+    }
+
+    public Race getRace() {
+        return this.race;
+    }
+
+    public void setRace(Race race) {
+        this.race = race == null ? Race.HUMAN : race;
+        DBAComponents.PLAYER_RACE.sync(this.player);
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound tag) {
+        String raw = tag.getString("Race");
+        try {
+            this.race = Race.valueOf(raw);
+        } catch (IllegalArgumentException | NullPointerException ignored) {
+            this.race = Race.HUMAN;
+        }
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound tag) {
+        tag.putString("Race", this.race.name());
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerStatsComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import dev.onyxstudios.cca.api.v3.component.ComponentV3;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+
+public class PlayerStatsComponent implements ComponentV3, AutoSyncedComponent {
+    private final PlayerEntity player;
+
+    private int level = 1;
+    private int experience = 0;
+    private int skillPoints = 0;
+
+    public PlayerStatsComponent(PlayerEntity player) {
+        this.player = player;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public void setLevel(int level) {
+        this.level = Math.max(1, level);
+        DBAComponents.PLAYER_STATS.sync(this.player);
+    }
+
+    public int getExperience() {
+        return this.experience;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = Math.max(0, experience);
+        DBAComponents.PLAYER_STATS.sync(this.player);
+    }
+
+    public int getSkillPoints() {
+        return this.skillPoints;
+    }
+
+    public void setSkillPoints(int skillPoints) {
+        this.skillPoints = Math.max(0, skillPoints);
+        DBAComponents.PLAYER_STATS.sync(this.player);
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound tag) {
+        this.level = Math.max(1, tag.getInt("Level"));
+        this.experience = Math.max(0, tag.getInt("Experience"));
+        this.skillPoints = Math.max(0, tag.getInt("SkillPoints"));
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound tag) {
+        tag.putInt("Level", this.level);
+        tag.putInt("Experience", this.experience);
+        tag.putInt("SkillPoints", this.skillPoints);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerTransformationComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import com.bernardo.dragonblockascension.transformation.Transformation;
+import dev.onyxstudios.cca.api.v3.component.ComponentV3;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
+
+public class PlayerTransformationComponent implements ComponentV3, AutoSyncedComponent {
+    private final PlayerEntity player;
+    private Transformation transformation = Transformation.NONE;
+
+    public PlayerTransformationComponent(PlayerEntity player) {
+        this.player = player;
+    }
+
+    public Transformation getTransformation() {
+        return this.transformation;
+    }
+
+    public void setTransformation(Transformation transformation) {
+        this.transformation = transformation == null ? Transformation.NONE : transformation;
+        DBAComponents.PLAYER_TRANSFORMATION.sync(this.player);
+    }
+
+    @Override
+    public void readFromNbt(NbtCompound tag) {
+        String raw = tag.getString("Transformation");
+        try {
+            this.transformation = Transformation.valueOf(raw);
+        } catch (IllegalArgumentException | NullPointerException ignored) {
+            this.transformation = Transformation.NONE;
+        }
+    }
+
+    @Override
+    public void writeToNbt(NbtCompound tag) {
+        tag.putString("Transformation", this.transformation.name());
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/ki/KiAttack.java ====
+package com.bernardo.dragonblockascension.ki;
+
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+
+public class KiAttack {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/ki/KiManager.java ====
+package com.bernardo.dragonblockascension.ki;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+
+public class KiManager {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/ki/KiUtils.java ====
+package com.bernardo.dragonblockascension.ki;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+
+public class KiUtils {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/network/PacketHandler.java ====
+package com.bernardo.dragonblockascension.network;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.util.Identifier;
+
+public class PacketHandler {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/race/Race.java ====
+package com.bernardo.dragonblockascension.race;
+
+public enum Race {
+    HUMAN,
+    SAIYAN,
+    NAMEKIAN,
+    FRIEZA,
+    ANDROID,
+    MAJIN,
+    HALF_SAIYAN
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/race/RaceRegistry.java ====
+package com.bernardo.dragonblockascension.race;
+
+import net.minecraft.util.Identifier;
+import net.minecraft.registry.Registry;
+
+public class RaceRegistry {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBABlocks.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.block.Block;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBABlocks {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAComponents.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import com.bernardo.dragonblockascension.DragonBlockAscension;
+import com.bernardo.dragonblockascension.component.PlayerKiComponent;
+import com.bernardo.dragonblockascension.component.PlayerRaceComponent;
+import com.bernardo.dragonblockascension.component.PlayerStatsComponent;
+import com.bernardo.dragonblockascension.component.PlayerTransformationComponent;
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistryV3;
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
+import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
+import net.minecraft.util.Identifier;
+
+public final class DBAComponents implements EntityComponentInitializer {
+    public static final ComponentKey<PlayerKiComponent> PLAYER_KI =
+            ComponentRegistryV3.INSTANCE.getOrCreate(
+                    new Identifier(DragonBlockAscension.MOD_ID, "player_ki"),
+                    PlayerKiComponent.class
+            );
+
+    public static final ComponentKey<PlayerRaceComponent> PLAYER_RACE =
+            ComponentRegistryV3.INSTANCE.getOrCreate(
+                    new Identifier(DragonBlockAscension.MOD_ID, "player_race"),
+                    PlayerRaceComponent.class
+            );
+
+    public static final ComponentKey<PlayerStatsComponent> PLAYER_STATS =
+            ComponentRegistryV3.INSTANCE.getOrCreate(
+                    new Identifier(DragonBlockAscension.MOD_ID, "player_stats"),
+                    PlayerStatsComponent.class
+            );
+
+    public static final ComponentKey<PlayerTransformationComponent> PLAYER_TRANSFORMATION =
+            ComponentRegistryV3.INSTANCE.getOrCreate(
+                    new Identifier(DragonBlockAscension.MOD_ID, "player_transformation"),
+                    PlayerTransformationComponent.class
+            );
+
+    @Override
+    public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
+        registry.registerForPlayers(PLAYER_KI, PlayerKiComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+        registry.registerForPlayers(PLAYER_RACE, PlayerRaceComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+        registry.registerForPlayers(PLAYER_STATS, PlayerStatsComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+        registry.registerForPlayers(PLAYER_TRANSFORMATION, PlayerTransformationComponent::new, RespawnCopyStrategy.ALWAYS_COPY);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAEntities.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.entity.EntityType;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBAEntities {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAItems.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBAItems {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAParticles.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.particle.ParticleType;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBAParticles {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBASounds.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBASounds {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/skill/Skill.java ====
+package com.bernardo.dragonblockascension.skill;
+
+import net.minecraft.util.Identifier;
+
+public class Skill {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/skill/SkillRegistry.java ====
+package com.bernardo.dragonblockascension.skill;
+
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class SkillRegistry {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/transformation/Transformation.java ====
+package com.bernardo.dragonblockascension.transformation;
+
+public enum Transformation {
+    NONE,
+    SUPER_SAIYAN,
+    SUPER_SAIYAN_2,
+    SUPER_SAIYAN_3,
+    SUPER_SAIYAN_GOD,
+    SUPER_SAIYAN_BLUE,
+    ULTRA_INSTINCT
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/transformation/TransformationRegistry.java ====
+package com.bernardo.dragonblockascension.transformation;
+
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class TransformationRegistry {
+}
+
+
+==== ./src/main/resources/fabric.mod.json ====
+{
+  "schemaVersion": 1,
+  "id": "dragonblockascension",
+  "version": "${version}",
+  "name": "Dragon Block Ascension",
+  "description": "A Fabric mod for Minecraft 1.20.1",
+  "authors": [
+    "Bernardo"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Bernardo-Drago/Dragon-Block-Ascension",
+    "sources": "https://github.com/Bernardo-Drago/Dragon-Block-Ascension"
+  },
+  "license": "LICENSE",
+  "icon": "assets/dragonblockascension/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bernardo.dragonblockascension.DragonBlockAscension"
+    ],
+    "client": [
+      "com.bernardo.dragonblockascension.client.DragonBlockAscensionClient"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "java": "${java_version}"
+  }
+}
+
