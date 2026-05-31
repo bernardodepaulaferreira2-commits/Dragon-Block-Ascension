@@ -1,6 +1,6 @@
-package com.example.auramod.client;
+package com.bernardo.dragonblockascension.client.aura;
 
-import com.example.auramod.AuraMod;
+import com.bernardo.dragonblockascension.DragonBlockAscension;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
@@ -38,10 +38,10 @@ import org.joml.Matrix4f;
 public class AuraRenderer {
 
     // Textures for each layer
-    private static final Identifier INNER_TEX =
-            new Identifier(AuraMod.MOD_ID, "textures/vfx/aura_inner.png");
-    private static final Identifier OUTLINE_TEX =
-            new Identifier(AuraMod.MOD_ID, "textures/vfx/aura_outline.png");
+        private static final Identifier INNER_TEX =
+            new Identifier(DragonBlockAscension.MOD_ID, "textures/vfx/aura_inner.png");
+        private static final Identifier OUTLINE_TEX =
+            new Identifier(DragonBlockAscension.MOD_ID, "textures/vfx/aura_outline.png");
 
     // === INNER CONFIG ===
     private static final float INNER_RADIUS = 0.5f;

@@ -1,4 +1,4 @@
-package com.example.auramod.client;
+package com.bernardo.dragonblockascension.client.aura;
 
 import net.minecraft.client.gl.ShaderProgram;
 

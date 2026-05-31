@@ -1,4 +1,4 @@
-package com.example.auramod.client;
+package com.bernardo.dragonblockascension.client.aura;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
