@@ -1,0 +1,71 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.player.fly.idle": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [0, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [0, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [0, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [0, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [0, 0, 0]} }
+      }
+    },
+    "animation.player.fly.move": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [-30, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [-20, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [-20, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [10, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [10, 0, 0]} }
+      }
+    },
+    "animation.player.fly.move_back": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [20, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [10, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [10, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [-5, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [-5, 0, 0]} }
+      }
+    },
+    "animation.player.fly.sprint": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [-85, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [-80, 0, -5]} },
+        "leftArm":  { "rotation": {"0.0": [-80, 0,  5]} },
+        "rightLeg": { "rotation": {"0.0": [80, 0,  3]} },
+        "leftLeg":  { "rotation": {"0.0": [80, 0, -3]} }
+      }
+    },
+    "animation.player.fly.up": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [-15, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [-30, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [-30, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [5, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [5, 0, 0]} }
+      }
+    },
+    "animation.player.fly.down": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [15, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [10, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [10, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [-10, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [-10, 0, 0]} }
+      }
+    }
+  }
+}
