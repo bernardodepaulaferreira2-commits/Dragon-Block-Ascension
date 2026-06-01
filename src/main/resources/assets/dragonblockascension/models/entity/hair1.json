@@ -1,7 +1,7 @@
 {
   "textures": {
-    "0": "obj3mc/goku_hair",
-    "particle": "obj3mc/goku_hair"
+    "0": "dragonblockascension:entity/hair1",
+    "particle": "dragonblockascension:entity/hair1"
   },
   "elements": [
     {

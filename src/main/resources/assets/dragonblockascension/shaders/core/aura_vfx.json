@@ -6,8 +6,8 @@
     "srcalpha": "one",
     "dstalpha": "zero"
   },
-  "vertex": "aura_vfx",
-  "fragment": "aura_vfx",
+  "vertex": "dragonblockascension:aura_vfx",
+  "fragment": "dragonblockascension:aura_vfx",
   "attributes": [
     "Position",
     "UV0",

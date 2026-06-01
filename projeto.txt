@@ -1,0 +1,2305 @@
+Project export from /workspaces/Dragon-Block-Ascension
+
+==== ./src/main/java/com/bernardo/dragonblockascension/DragonBlockAscension.java ====
+package com.bernardo.dragonblockascension;
+
+import com.bernardo.dragonblockascension.network.PacketHandler;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import net.fabricmc.api.ModInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DragonBlockAscension implements ModInitializer {
+    public static final String MOD_ID = "dragonblockascension";
+    public static final Logger LOGGER = LoggerFactory.getLogger("DragonBlockAscension");
+
+    @Override
+    public void onInitialize() {
+        LOGGER.info("Dragon Block Ascension carregado.");
+        DBAComponents.init();
+        PacketHandler.registerServerReceivers();
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/DragonBlockAscensionClient.java ====
+package com.bernardo.dragonblockascension.client;
+
+import com.bernardo.dragonblockascension.client.aura.AuraRenderer;
+import com.bernardo.dragonblockascension.client.aura.AuraShaderAccess;
+import com.bernardo.dragonblockascension.client.gui.DBAKeyBindings;
+import com.bernardo.dragonblockascension.client.render.DBALayerRegistry;
+import com.bernardo.dragonblockascension.network.ClientPacketHandler;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.Identifier;
+
+public class DragonBlockAscensionClient implements ClientModInitializer {
+
+    @Override
+    public void onInitializeClient() {
+        DBALayerRegistry.register();
+        DBAKeyBindings.register();
+        ClientPacketHandler.registerClientReceivers();
+
+        CoreShaderRegistrationCallback.EVENT.register(ctx -> {
+            ctx.register(
+                new Identifier("dragonblockascension", "aura_vfx"),
+                VertexFormats.POSITION_TEXTURE_COLOR,
+                shader -> AuraShaderAccess.auraShader = shader
+            );
+        });
+
+        WorldRenderEvents.AFTER_ENTITIES.register(AuraRenderer::onRenderWorld);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/aura/AuraRenderer.java ====
+package com.bernardo.dragonblockascension.client.aura;
+
+import com.bernardo.dragonblockascension.DragonBlockAscension;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.Perspective;
+import net.minecraft.client.render.*;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
+
+public class AuraRenderer {
+
+    private static final Identifier INNER_TEX =
+            new Identifier(DragonBlockAscension.MOD_ID, "textures/vfx/aura_inner.png");
+    private static final Identifier OUTLINE_TEX =
+            new Identifier(DragonBlockAscension.MOD_ID, "textures/vfx/aura_outline.png");
+
+    private static final float INNER_RADIUS = 0.5f;
+    private static final float INNER_ALPHA = 0.6f;
+    private static final float INNER_ROT_SPEED = 1.2f;
+    private static final float INNER_R = 1.0f;
+    private static final float INNER_G = 0.95f;
+    private static final float INNER_B = 0.5f;
+
+    private static final float OUTER_RADIUS = 0.85f;
+    private static final float OUTER_ALPHA = 0.35f;
+    private static final float OUTER_ROT_SPEED = -0.7f;
+    private static final float OUTER_R = 1.0f;
+    private static final float OUTER_G = 0.8f;
+    private static final float OUTER_B = 0.15f;
+
+    private static final float AURA_HEIGHT = 2.3f;
+    private static final int H_SEGMENTS = 20;
+    private static final int V_SEGMENTS = 12;
+    private static final float PULSE_SPEED = 2.5f;
+    private static final float PULSE_AMOUNT = 0.08f;
+    private static final float WAVE_AMP = 0.05f;
+
+    public static void onRenderWorld(WorldRenderContext ctx) {
+        if (AuraShaderAccess.auraShader == null) return;
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.world == null) return;
+
+        float tickDelta = ctx.tickDelta();
+        Vec3d camPos = ctx.camera().getPos();
+        MatrixStack matrices = ctx.matrixStack();
+
+        if (client.player != null) {
+            if (client.options.getPerspective() != Perspective.FIRST_PERSON) {
+                renderOnPlayer(client.player, matrices, camPos, tickDelta);
+            }
+        }
+
+        for (PlayerEntity player : client.world.getPlayers()) {
+            if (player == client.player) continue;
+            renderOnPlayer(player, matrices, camPos, tickDelta);
+        }
+    }
+
+    private static void renderOnPlayer(PlayerEntity player, MatrixStack matrices,
+                                       Vec3d camPos, float tickDelta) {
+        double px = MathHelper.lerp(tickDelta, player.prevX, player.getX()) - camPos.x;
+        double py = MathHelper.lerp(tickDelta, player.prevY, player.getY()) - camPos.y;
+        double pz = MathHelper.lerp(tickDelta, player.prevZ, player.getZ()) - camPos.z;
+
+        float time = (player.age + tickDelta) * 0.05f;
+
+        matrices.push();
+        matrices.translate(px, py, pz);
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(
+                GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE,
+                GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
+        RenderSystem.disableCull();
+        RenderSystem.depthMask(false);
+        RenderSystem.enableDepthTest();
+        RenderSystem.setShader(() -> AuraShaderAccess.auraShader);
+
+        RenderSystem.setShaderTexture(0, INNER_TEX);
+        renderCylinder(matrices, time, INNER_RADIUS, INNER_ALPHA,
+                INNER_R, INNER_G, INNER_B, INNER_ROT_SPEED);
+
+        RenderSystem.setShaderTexture(0, OUTLINE_TEX);
+        renderCylinder(matrices, time * 0.8f, OUTER_RADIUS, OUTER_ALPHA,
+                OUTER_R, OUTER_G, OUTER_B, OUTER_ROT_SPEED);
+
+        RenderSystem.depthMask(true);
+        RenderSystem.enableCull();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableBlend();
+
+        matrices.pop();
+    }
+
+    private static void renderCylinder(MatrixStack matrices, float time, float baseRadius,
+                                       float baseAlpha, float r, float g, float b,
+                                       float rotSpeed) {
+        Matrix4f posMatrix = matrices.peek().getPositionMatrix();
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buf = tessellator.getBuffer();
+        buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+
+        float rotation = time * rotSpeed;
+        float pulse = 1.0f + (float) Math.sin(time * PULSE_SPEED) * PULSE_AMOUNT;
+        float radius = baseRadius * pulse;
+
+        int ri = clamp255(r), gi = clamp255(g), bi = clamp255(b);
+
+        for (int i = 0; i < H_SEGMENTS; i++) {
+            float angle1 = (float)(2.0 * Math.PI * i / H_SEGMENTS) + rotation;
+            float angle2 = (float)(2.0 * Math.PI * (i + 1) / H_SEGMENTS) + rotation;
+            float u1 = (float) i / H_SEGMENTS;
+            float u2 = (float)(i + 1) / H_SEGMENTS;
+
+            for (int j = 0; j < V_SEGMENTS; j++) {
+                float v1 = (float) j / V_SEGMENTS;
+                float v2 = (float)(j + 1) / V_SEGMENTS;
+                float y1 = v1 * AURA_HEIGHT - 0.05f;
+                float y2 = v2 * AURA_HEIGHT - 0.05f;
+
+                float w1 = (float) Math.sin(y1 * 3.5f + time * 2.0f + angle1 * 2.0f) * WAVE_AMP;
+                float w2 = (float) Math.sin(y2 * 3.5f + time * 2.0f + angle2 * 2.0f) * WAVE_AMP;
+
+                float rad1 = (radius + w1) * taper(v1);
+                float rad2 = (radius + w2) * taper(v2);
+
+                float x1a = cos(angle1)*rad1, z1a = sin(angle1)*rad1;
+                float x2a = cos(angle2)*rad1, z2a = sin(angle2)*rad1;
+                float x1b = cos(angle1)*rad2, z1b = sin(angle1)*rad2;
+                float x2b = cos(angle2)*rad2, z2b = sin(angle2)*rad2;
+
+                int a1 = clamp255(baseAlpha * alphaFade(v1));
+                int a2 = clamp255(baseAlpha * alphaFade(v2));
+
+                buf.vertex(posMatrix, x1a, y1, z1a).texture(u1, v1).color(ri, gi, bi, a1).next();
+                buf.vertex(posMatrix, x2a, y1, z2a).texture(u2, v1).color(ri, gi, bi, a1).next();
+                buf.vertex(posMatrix, x2b, y2, z2b).texture(u2, v2).color(ri, gi, bi, a2).next();
+                buf.vertex(posMatrix, x1b, y2, z1b).texture(u1, v2).color(ri, gi, bi, a2).next();
+            }
+        }
+        tessellator.draw();
+    }
+
+    private static float taper(float v) {
+        if (v < 0.12f) return 0.4f + (v / 0.12f) * 0.6f;
+        if (v < 0.55f) return 1.0f;
+        return 1.0f - ((v - 0.55f) / 0.45f) * 0.75f;
+    }
+
+    private static float alphaFade(float v) {
+        if (v < 0.08f) return v / 0.08f;
+        if (v > 0.8f) return 1.0f - (v - 0.8f) / 0.2f;
+        return 1.0f;
+    }
+
+    private static int clamp255(float f) { return Math.max(0, Math.min(255, (int)(f * 255))); }
+    private static float cos(float a) { return (float) Math.cos(a); }
+    private static float sin(float a) { return (float) Math.sin(a); }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/aura/AuraShaderAccess.java ====
+package com.bernardo.dragonblockascension.client.aura;
+
+import net.minecraft.client.gl.ShaderProgram;
+
+/**
+ * Holds the reference to our custom loaded shader program.
+ * Set by AuraModClient during shader registration callback.
+ */
+public class AuraShaderAccess {
+    public static ShaderProgram auraShader = null;
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/CharacterCreationScreen.java ====
+package com.bernardo.dragonblockascension.client.gui;
+
+import com.bernardo.dragonblockascension.network.PacketHandler;
+import com.bernardo.dragonblockascension.race.Race;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+public class CharacterCreationScreen extends Screen {
+
+    private static final Identifier BG = new Identifier("dragonblockascension", "textures/gui/gui.png");
+    private static final int GUI_W = 256;
+    private static final int GUI_H = 159;
+
+    private static final Race[] RACES = {
+        Race.HUMAN,
+        Race.SAIYAN,
+        Race.HALF_SAIYAN
+    };
+
+    private int raceIndex = 0;
+    private boolean useCustomBody = false;
+    private ButtonWidget bodyToggle;
+    private ButtonWidget raceLabel;
+
+    public CharacterCreationScreen() {
+        super(Text.literal("Criação de Personagem"));
+        if (MinecraftClient.getInstance().player != null) {
+            Race current = MinecraftClient.getInstance().player
+                .getAttached(DBAComponents.PLAYER_RACE).getRace();
+            for (int i = 0; i < RACES.length; i++) {
+                if (RACES[i] == current) { raceIndex = i; break; }
+            }
+        }
+    }
+
+    @Override
+    protected void init() {
+        int cx = this.width / 2;
+        int cy = this.height / 2;
+
+        // Seta esquerda
+        this.addDrawableChild(ButtonWidget.builder(Text.literal("<"), btn -> {
+            raceIndex = (raceIndex - 1 + RACES.length) % RACES.length;
+            raceLabel.setMessage(Text.literal(RACES[raceIndex].name()));
+        }).dimensions(cx - 70, cy - 10, 20, 20).build());
+
+        // Label da raça
+        raceLabel = ButtonWidget.builder(Text.literal(RACES[raceIndex].name()), btn -> {})
+            .dimensions(cx - 45, cy - 10, 90, 20).build();
+        this.addDrawableChild(raceLabel);
+
+        // Seta direita
+        this.addDrawableChild(ButtonWidget.builder(Text.literal(">"), btn -> {
+            raceIndex = (raceIndex + 1) % RACES.length;
+            raceLabel.setMessage(Text.literal(RACES[raceIndex].name()));
+        }).dimensions(cx + 50, cy - 10, 20, 20).build());
+
+        // Body toggle
+        bodyToggle = ButtonWidget.builder(Text.literal("Body"), btn -> {
+            useCustomBody = !useCustomBody;
+            bodyToggle.setMessage(Text.literal(useCustomBody ? "Custom Body" : "Body"));
+            ClientPlayNetworking.send(PacketHandler.SET_BODY,
+                PacketHandler.createSetBodyPacket(useCustomBody));
+        }).dimensions(cx - 30, cy + 20, 60, 20).build();
+        this.addDrawableChild(bodyToggle);
+
+        // Confirmar
+        this.addDrawableChild(ButtonWidget.builder(Text.literal("Confirmar"), btn -> {
+            if (MinecraftClient.getInstance().player != null) {
+                MinecraftClient.getInstance().player
+                    .getAttached(DBAComponents.PLAYER_RACE)
+                    .setRace(RACES[raceIndex]);
+                ClientPlayNetworking.send(PacketHandler.SET_RACE,
+                    PacketHandler.createSetRacePacket(RACES[raceIndex]));
+            }
+            this.close();
+        }).dimensions(cx - 30, cy + 50, 60, 20).build());
+
+        // Fechar
+        this.addDrawableChild(ButtonWidget.builder(Text.literal("X"), btn -> this.close())
+            .dimensions(cx + 100, cy - 60, 20, 20).build());
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackground(context);
+        int x = (this.width - GUI_W) / 2;
+        int y = (this.height - GUI_H) / 2;
+        context.drawTexture(BG, x, y, 0, 0, GUI_W, GUI_H, 256, 256);
+        context.drawCenteredTextWithShadow(this.textRenderer,
+            Text.literal("Criação de Personagem"),
+            this.width / 2, y + 10, 0xFFFFFF);
+        super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean shouldPause() { return false; }
+
+    public static void open() {
+        MinecraftClient.getInstance().setScreen(new CharacterCreationScreen());
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/DBAKeyBindings.java ====
+package com.bernardo.dragonblockascension.client.gui;
+
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
+
+public class DBAKeyBindings {
+
+    public static KeyBinding openCharacterMenu;
+
+    public static void register() {
+        openCharacterMenu = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.dragonblockascension.character_menu",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            "category.dragonblockascension"
+        ));
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null) return;
+            while (openCharacterMenu.wasPressed()) {
+                CharacterCreationScreen.open();
+            }
+        });
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WArrowLeftButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WArrowLeftButton extends WIconButton {
+    public WArrowLeftButton() {
+        super(
+            0,  0,  // UV normal
+            0,  10, // UV pressed
+            -1, -1, // sem bloqueado
+            10, 10, // tamanho 10x10
+            256, 256 // spritesheet
+        );
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WArrowRightButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WArrowRightButton extends WIconButton {
+    public WArrowRightButton() {
+        super(
+            10, 0,  // UV normal
+            10, 10, // UV pressed
+            -1, -1, // sem bloqueado
+            10, 10, // tamanho 10x10
+            256, 256 // spritesheet
+        );
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WCloseButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WCloseButton extends WIconButton {
+    public WCloseButton() {
+        super(
+            50, 0,  // UV normal
+            50, 15, // UV pressed
+            -1, -1, // sem bloqueado
+            15, 15, // tamanho
+            256, 256 // spritesheet
+        );
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WIconButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+public class WIconButton extends ButtonWidget {
+
+    private static final Identifier ICONS = new Identifier("dragonblockascension", "textures/gui/icons.png");
+
+    private final int uNormal;
+    private final int vNormal;
+    private final int uPressed;
+    private final int vPressed;
+    private final int uLocked;
+    private final int vLocked;
+    private final int btnW;
+    private final int btnH;
+    private final int sheetW;
+    private final int sheetH;
+    private boolean locked = false;
+    private boolean holding = false;
+
+    public WIconButton(int uNormal, int vNormal,
+                       int uPressed, int vPressed,
+                       int uLocked, int vLocked,
+                       int btnW, int btnH,
+                       int sheetW, int sheetH) {
+        super(0, 0, btnW, btnH, Text.empty(), btn -> {}, DEFAULT_NARRATION_SUPPLIER);
+        this.uNormal  = uNormal;
+        this.vNormal  = vNormal;
+        this.uPressed = uPressed;
+        this.vPressed = vPressed;
+        this.uLocked  = uLocked;
+        this.vLocked  = vLocked;
+        this.btnW     = btnW;
+        this.btnH     = btnH;
+        this.sheetW   = sheetW;
+        this.sheetH   = sheetH;
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        if (!this.visible) return;
+        int u, v;
+        if (locked && uLocked != -1) {
+            u = uLocked; v = vLocked;
+        } else if (holding) {
+            u = uPressed; v = vPressed;
+        } else {
+            u = uNormal; v = vNormal;
+        }
+        context.drawTexture(ICONS, this.getX(), this.getY(), u, v, btnW, btnH, sheetW, sheetH);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (locked) return false;
+        holding = true;
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        holding = false;
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    public WIconButton setLocked(boolean locked) {
+        this.locked = locked;
+        this.active = !locked;
+        return this;
+    }
+
+    public boolean isLocked() { return locked; }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WPlusButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WPlusButton extends WIconButton {
+    public WPlusButton() {
+        super(
+            30, 0,  // UV normal
+            30, 10, // UV pressed
+            30, 20, // UV bloqueado
+            10, 10, // tamanho 10x10
+            256, 256 // spritesheet
+        );
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WPlusLockedButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WPlusLockedButton extends WIconButton {
+    public WPlusLockedButton(int w, int h) {
+        super(
+            30, 20, // UV bloqueado
+            -1, -1, // sem pressed
+            -1, -1, // sem bloqueado separado
+            w, h,   // tamanho - informar
+            256, 256 // spritesheet
+        );
+        this.setLocked(true);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WTrashButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WTrashButton extends WIconButton {
+    public WTrashButton() {
+        super(
+            20, 0,  // UV normal
+            20, 10, // UV pressed
+            20, 20, // UV bloqueado
+            10, 10, // tamanho 10x10
+            256, 256 // spritesheet
+        );
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/gui/widget/WTrashLockedButton.java ====
+package com.bernardo.dragonblockascension.client.gui.widget;
+
+public class WTrashLockedButton extends WIconButton {
+    public WTrashLockedButton() {
+        super(
+            20, 20, // UV bloqueado
+            -1, -1, // sem pressed
+            -1, -1, // sem bloqueado separado
+            10, 10, // tamanho 10x10
+            256, 256 // spritesheet
+        );
+        this.setLocked(true);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/model/SayajinModel.java ====
+package com.bernardo.dragonblockascension.client.model;
+
+import net.minecraft.client.model.*;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Identifier;
+
+public class SayajinModel<T extends LivingEntity> extends BipedEntityModel<T> {
+
+    public static final Identifier TEXTURE = new Identifier("dragonblockascension",
+            "textures/ecc/sayajin.png");
+
+    private static final float UV_SCALE = 512.0f / 64.0f;
+
+    public SayajinModel(ModelPart root) {
+        super(root);
+    }
+
+    public static TexturedModelData getTexturedModelData() {
+        ModelData modelData = new ModelData();
+        ModelPartData root = modelData.getRoot();
+
+        int tw = 512;
+        int th = 512;
+
+        root.addChild("head",
+            ModelPartBuilder.create()
+                .uv((int)(0 * UV_SCALE), (int)(0 * UV_SCALE))
+                .cuboid(-4, -8, -4, 8, 8, 8, new Dilation(0.5f)),
+            ModelTransform.pivot(0, 0, 0));
+
+        root.addChild("hat",
+            ModelPartBuilder.create()
+                .uv((int)(32 * UV_SCALE), (int)(0 * UV_SCALE))
+                .cuboid(-4, -8, -4, 8, 8, 8, new Dilation(0.55f)),
+            ModelTransform.pivot(0, 0, 0));
+
+        root.addChild("body",
+            ModelPartBuilder.create()
+                .uv((int)(16 * UV_SCALE), (int)(16 * UV_SCALE))
+                .cuboid(-4, 0, -2, 8, 12, 4, new Dilation(0.25f)),
+            ModelTransform.pivot(0, 0, 0));
+
+        root.addChild("right_arm",
+            ModelPartBuilder.create()
+                .uv((int)(40 * UV_SCALE), (int)(16 * UV_SCALE))
+                .cuboid(-3, -2, -2, 4, 12, 4, new Dilation(0.25f)),
+            ModelTransform.pivot(-5, 2, 0));
+
+        root.addChild("left_arm",
+            ModelPartBuilder.create()
+                .uv((int)(32 * UV_SCALE), (int)(48 * UV_SCALE))
+                .cuboid(-1, -2, -2, 4, 12, 4, new Dilation(0.25f)),
+            ModelTransform.pivot(5, 2, 0));
+
+        root.addChild("right_leg",
+            ModelPartBuilder.create()
+                .uv((int)(0 * UV_SCALE), (int)(16 * UV_SCALE))
+                .cuboid(-2, 0, -2, 4, 12, 4, new Dilation(0.25f)),
+            ModelTransform.pivot(-1.9f, 12, 0));
+
+        root.addChild("left_leg",
+            ModelPartBuilder.create()
+                .uv((int)(16 * UV_SCALE), (int)(48 * UV_SCALE))
+                .cuboid(-2, 0, -2, 4, 12, 4, new Dilation(0.25f)),
+            ModelTransform.pivot(1.9f, 12, 0));
+
+        return TexturedModelData.of(modelData, tw, th);
+    }
+
+    public static SayajinModel<?> createModel() {
+        TexturedModelData tmd = getTexturedModelData();
+        return new SayajinModel<>(tmd.createModel());
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/render/DBALayerRegistry.java ====
+package com.bernardo.dragonblockascension.client.render;
+
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+
+public class DBALayerRegistry {
+
+    @SuppressWarnings("unchecked")
+    public static void register() {
+        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, renderer, registrationHelper, context) -> {
+            if (entityType == EntityType.PLAYER && renderer instanceof PlayerEntityRenderer) {
+                FeatureRendererContext<PlayerEntity, PlayerEntityModel<PlayerEntity>> ctx =
+                    (FeatureRendererContext<PlayerEntity, PlayerEntityModel<PlayerEntity>>) renderer;
+                registrationHelper.register(new SayajinLayer(ctx));
+            }
+        });
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/client/render/SayajinLayer.java ====
+package com.bernardo.dragonblockascension.client.render;
+
+import com.bernardo.dragonblockascension.client.model.SayajinModel;
+import com.bernardo.dragonblockascension.race.Race;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerEntity;
+
+public class SayajinLayer extends FeatureRenderer<PlayerEntity, PlayerEntityModel<PlayerEntity>> {
+
+    private final SayajinModel<PlayerEntity> model;
+
+    public SayajinLayer(FeatureRendererContext<PlayerEntity, PlayerEntityModel<PlayerEntity>> context) {
+        super(context);
+        this.model = new SayajinModel<>(SayajinModel.getTexturedModelData().createModel());
+    }
+
+    @Override
+    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers,
+                       int light, PlayerEntity player, float limbAngle, float limbDistance,
+                       float tickDelta, float animationProgress, float headYaw, float headPitch) {
+
+        Race race = player.getAttached(DBAComponents.PLAYER_RACE).getRace();
+        if (race != Race.SAIYAN) return;
+
+        this.getContextModel().copyStateTo(this.model);
+
+        this.model.render(matrices,
+                vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(SayajinModel.TEXTURE)),
+                light, OverlayTexture.DEFAULT_UV, 1f, 1f, 1f, 1f);
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerKiComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+public class PlayerKiComponent {
+    public static final Codec<PlayerKiComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
+        Codec.INT.fieldOf("ki").forGetter(c -> c.ki),
+        Codec.INT.fieldOf("maxKi").forGetter(c -> c.maxKi),
+        Codec.INT.fieldOf("kiRegenRate").forGetter(c -> c.kiRegenRate),
+        Codec.INT.fieldOf("currentKi").forGetter(c -> c.currentKi)
+    ).apply(i, PlayerKiComponent::new));
+
+    private int ki, maxKi, kiRegenRate, currentKi;
+
+    public PlayerKiComponent() { this(0, 100, 1, 100); }
+    public PlayerKiComponent(int ki, int maxKi, int kiRegenRate, int currentKi) {
+        this.ki = ki; this.maxKi = maxKi; this.kiRegenRate = kiRegenRate; this.currentKi = currentKi;
+    }
+
+    public int getKi() { return ki; }
+    public void setKi(int ki) { this.ki = Math.max(0, Math.min(ki, maxKi)); }
+    public int getMaxKi() { return maxKi; }
+    public void setMaxKi(int maxKi) { this.maxKi = maxKi; }
+    public int getKiRegenRate() { return kiRegenRate; }
+    public void setKiRegenRate(int rate) { this.kiRegenRate = Math.max(0, rate); }
+    public int getCurrentKi() { return currentKi; }
+    public void setCurrentKi(int v) { this.currentKi = Math.max(0, Math.min(v, maxKi)); }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerRaceComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.bernardo.dragonblockascension.race.Race;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+public class PlayerRaceComponent {
+    public static final Codec<PlayerRaceComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
+        Codec.STRING.fieldOf("race").forGetter(c -> c.race.name())
+    ).apply(i, s -> new PlayerRaceComponent(Race.valueOf(s))));
+
+    private Race race;
+
+    public PlayerRaceComponent() { this(Race.HUMAN); }
+    public PlayerRaceComponent(Race race) { this.race = race == null ? Race.HUMAN : race; }
+
+    public Race getRace() { return race; }
+    public void setRace(Race race) { this.race = race == null ? Race.HUMAN : race; }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerStatsComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+public class PlayerStatsComponent {
+    public static final Codec<PlayerStatsComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
+        Codec.INT.fieldOf("level").forGetter(c -> c.level),
+        Codec.INT.fieldOf("experience").forGetter(c -> c.experience),
+        Codec.INT.fieldOf("skillPoints").forGetter(c -> c.skillPoints)
+    ).apply(i, PlayerStatsComponent::new));
+
+    private int level, experience, skillPoints;
+
+    public PlayerStatsComponent() { this(1, 0, 0); }
+    public PlayerStatsComponent(int level, int experience, int skillPoints) {
+        this.level = level; this.experience = experience; this.skillPoints = skillPoints;
+    }
+
+    public int getLevel() { return level; }
+    public void setLevel(int level) { this.level = Math.max(1, level); }
+    public int getExperience() { return experience; }
+    public void setExperience(int exp) { this.experience = Math.max(0, exp); }
+    public int getSkillPoints() { return skillPoints; }
+    public void setSkillPoints(int sp) { this.skillPoints = Math.max(0, sp); }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/component/PlayerTransformationComponent.java ====
+package com.bernardo.dragonblockascension.component;
+
+import com.bernardo.dragonblockascension.transformation.Transformation;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+public class PlayerTransformationComponent {
+    public static final Codec<PlayerTransformationComponent> CODEC = RecordCodecBuilder.create(i -> i.group(
+        Codec.STRING.fieldOf("transformation").forGetter(c -> c.transformation.name())
+    ).apply(i, s -> new PlayerTransformationComponent(Transformation.valueOf(s))));
+
+    private Transformation transformation;
+
+    public PlayerTransformationComponent() { this(Transformation.NONE); }
+    public PlayerTransformationComponent(Transformation t) { this.transformation = t == null ? Transformation.NONE : t; }
+
+    public Transformation getTransformation() { return transformation; }
+    public void setTransformation(Transformation t) { this.transformation = t == null ? Transformation.NONE : t; }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/ki/KiAttack.java ====
+package com.bernardo.dragonblockascension.ki;
+
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+
+public class KiAttack {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/ki/KiManager.java ====
+package com.bernardo.dragonblockascension.ki;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+
+public class KiManager {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/ki/KiUtils.java ====
+package com.bernardo.dragonblockascension.ki;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+
+public class KiUtils {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/network/ClientPacketHandler.java ====
+package com.bernardo.dragonblockascension.network;
+
+import com.bernardo.dragonblockascension.race.Race;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.UUID;
+
+public class ClientPacketHandler {
+
+    public static void registerClientReceivers() {
+
+        // Servidor -> Cliente: sincroniza raça de um player
+        ClientPlayNetworking.registerGlobalReceiver(PacketHandler.SYNC_RACE, (client, handler, buf, responseSender) -> {
+            UUID uuid = buf.readUuid();
+            Race race = Race.valueOf(buf.readString());
+            client.execute(() -> {
+                if (client.world == null) return;
+                for (PlayerEntity player : client.world.getPlayers()) {
+                    if (player.getUuid().equals(uuid)) {
+                        player.getAttached(DBAComponents.PLAYER_RACE).setRace(race);
+                        break;
+                    }
+                }
+            });
+        });
+
+        // Servidor -> Cliente: sincroniza body de um player
+        ClientPlayNetworking.registerGlobalReceiver(PacketHandler.SYNC_BODY, (client, handler, buf, responseSender) -> {
+            UUID uuid = buf.readUuid();
+            boolean useCustom = buf.readBoolean();
+            client.execute(() -> {
+                if (client.world == null) return;
+                MinecraftClient mc = MinecraftClient.getInstance();
+                // TODO: aplicar textura customizada no player correto
+                // Quando tiver o sistema de body implementado
+            });
+        });
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/network/PacketHandler.java ====
+package com.bernardo.dragonblockascension.network;
+
+import com.bernardo.dragonblockascension.component.PlayerRaceComponent;
+import com.bernardo.dragonblockascension.race.Race;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+
+public class PacketHandler {
+
+    // IDs dos packets
+    public static final Identifier SET_RACE    = new Identifier("dragonblockascension", "set_race");
+    public static final Identifier SET_BODY    = new Identifier("dragonblockascension", "set_body");
+    public static final Identifier SYNC_RACE   = new Identifier("dragonblockascension", "sync_race");
+    public static final Identifier SYNC_BODY   = new Identifier("dragonblockascension", "sync_body");
+
+    // Registra os receivers no servidor
+    public static void registerServerReceivers() {
+
+        // Cliente -> Servidor: player escolheu uma raça
+        ServerPlayNetworking.registerGlobalReceiver(SET_RACE, (server, player, handler, buf, responseSender) -> {
+            Race race = Race.valueOf(buf.readString());
+            server.execute(() -> {
+                PlayerRaceComponent comp = player.getAttached(DBAComponents.PLAYER_RACE);
+                comp.setRace(race);
+                player.setAttached(DBAComponents.PLAYER_RACE, comp);
+
+                // Sincroniza para todos os jogadores que veem esse player
+                syncRaceToAll(player, race);
+            });
+        });
+
+        // Cliente -> Servidor: player toggleou custom body
+        ServerPlayNetworking.registerGlobalReceiver(SET_BODY, (server, player, handler, buf, responseSender) -> {
+            boolean useCustom = buf.readBoolean();
+            server.execute(() -> {
+                // TODO: salvar preferência de body no componente
+                // Por enquanto só sincroniza de volta
+                syncBodyToAll(player, useCustom);
+            });
+        });
+    }
+
+    // Sincroniza raça para todos os jogadores
+    public static void syncRaceToAll(ServerPlayerEntity player, Race race) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeUuid(player.getUuid());
+        buf.writeString(race.name());
+        player.getServerWorld().getServer().getPlayerManager().sendToAll(
+            ServerPlayNetworking.createS2CPacket(SYNC_RACE, buf)
+        );
+    }
+
+    // Sincroniza body para todos os jogadores
+    public static void syncBodyToAll(ServerPlayerEntity player, boolean useCustom) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeUuid(player.getUuid());
+        buf.writeBoolean(useCustom);
+        player.getServerWorld().getServer().getPlayerManager().sendToAll(
+            ServerPlayNetworking.createS2CPacket(SYNC_BODY, buf)
+        );
+    }
+
+    // Cria packet C->S para setar raça
+    public static PacketByteBuf createSetRacePacket(Race race) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeString(race.name());
+        return buf;
+    }
+
+    // Cria packet C->S para setar body
+    public static PacketByteBuf createSetBodyPacket(boolean useCustom) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBoolean(useCustom);
+        return buf;
+    }
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/race/Race.java ====
+package com.bernardo.dragonblockascension.race;
+
+public enum Race {
+    HUMAN,
+    SAIYAN,
+    NAMEKIAN,
+    ARCONSIAN,
+    ANDROID,
+    MAJIN,
+    HALF_SAIYAN
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/race/RaceRegistry.java ====
+package com.bernardo.dragonblockascension.race;
+
+import net.minecraft.util.Identifier;
+import net.minecraft.registry.Registry;
+
+public class RaceRegistry {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBABlocks.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.block.Block;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBABlocks {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAComponents.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import com.bernardo.dragonblockascension.component.PlayerKiComponent;
+import com.bernardo.dragonblockascension.component.PlayerRaceComponent;
+import com.bernardo.dragonblockascension.component.PlayerStatsComponent;
+import com.bernardo.dragonblockascension.component.PlayerTransformationComponent;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.util.Identifier;
+
+public final class DBAComponents {
+    public static final AttachmentType<PlayerKiComponent> PLAYER_KI =
+        AttachmentRegistry.createPersistent(
+            new Identifier("dragonblockascension", "player_ki"),
+            PlayerKiComponent.CODEC
+        );
+
+    public static final AttachmentType<PlayerRaceComponent> PLAYER_RACE =
+        AttachmentRegistry.createPersistent(
+            new Identifier("dragonblockascension", "player_race"),
+            PlayerRaceComponent.CODEC
+        );
+
+    public static final AttachmentType<PlayerStatsComponent> PLAYER_STATS =
+        AttachmentRegistry.createPersistent(
+            new Identifier("dragonblockascension", "player_stats"),
+            PlayerStatsComponent.CODEC
+        );
+
+    public static final AttachmentType<PlayerTransformationComponent> PLAYER_TRANSFORMATION =
+        AttachmentRegistry.createPersistent(
+            new Identifier("dragonblockascension", "player_transformation"),
+            PlayerTransformationComponent.CODEC
+        );
+
+    public static void init() {}
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAEntities.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.entity.EntityType;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBAEntities {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAItems.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBAItems {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBAParticles.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.particle.ParticleType;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBAParticles {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/registry/DBASounds.java ====
+package com.bernardo.dragonblockascension.registry;
+
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class DBASounds {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/skill/Skill.java ====
+package com.bernardo.dragonblockascension.skill;
+
+import net.minecraft.util.Identifier;
+
+public class Skill {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/skill/SkillRegistry.java ====
+package com.bernardo.dragonblockascension.skill;
+
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class SkillRegistry {
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/transformation/Transformation.java ====
+package com.bernardo.dragonblockascension.transformation;
+
+public enum Transformation {
+    NONE,
+    SUPER_SAIYAN,
+    SUPER_SAIYAN_2,
+    SUPER_SAIYAN_3,
+    SUPER_SAIYAN_GOD,
+    SUPER_SAIYAN_BLUE,
+    ULTRA_INSTINCT
+}
+
+
+==== ./src/main/java/com/bernardo/dragonblockascension/transformation/TransformationRegistry.java ====
+package com.bernardo.dragonblockascension.transformation;
+
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
+
+public class TransformationRegistry {
+}
+
+
+==== ./src/main/resources/assets/dragonblockascension/animations/fly.animation.json ====
+{
+  "format_version": "1.12.0",
+  "animations": {
+    "animation.player.fly.idle": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [0, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [0, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [0, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [0, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [0, 0, 0]} }
+      }
+    },
+    "animation.player.fly.move": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [-30, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [-20, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [-20, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [10, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [10, 0, 0]} }
+      }
+    },
+    "animation.player.fly.move_back": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [20, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [10, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [10, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [-5, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [-5, 0, 0]} }
+      }
+    },
+    "animation.player.fly.sprint": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [-85, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [-80, 0, -5]} },
+        "leftArm":  { "rotation": {"0.0": [-80, 0,  5]} },
+        "rightLeg": { "rotation": {"0.0": [80, 0,  3]} },
+        "leftLeg":  { "rotation": {"0.0": [80, 0, -3]} }
+      }
+    },
+    "animation.player.fly.up": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [-15, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [-30, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [-30, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [5, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [5, 0, 0]} }
+      }
+    },
+    "animation.player.fly.down": {
+      "loop": true,
+      "animation_length": 1.0,
+      "bones": {
+        "root": { "rotation": {"0.0": [15, 0, 0]} },
+        "rightArm": { "rotation": {"0.0": [10, 0, -10]} },
+        "leftArm":  { "rotation": {"0.0": [10, 0,  10]} },
+        "rightLeg": { "rotation": {"0.0": [-10, 0, 0]} },
+        "leftLeg":  { "rotation": {"0.0": [-10, 0, 0]} }
+      }
+    }
+  }
+}
+
+
+==== ./src/main/resources/assets/dragonblockascension/animations/fly.animation.tail.json ====
+{
+	"format_version": "1.12.0",
+	"animations": {
+		"animation.fly_backward": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.25,
+			"bones": {
+				"Head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -1, 1]
+						}
+					}
+				},
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -1, 2]
+						}
+					}
+				},
+				"Right Arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2083": {
+							"vector": [-20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2083": {
+							"vector": [0, -1, 1]
+						}
+					}
+				},
+				"Left Arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2083": {
+							"vector": [-20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2083": {
+							"vector": [0, -1, 1]
+						}
+					}
+				},
+				"Right Leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-17.5, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Left Leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-17.5, 0, 0]
+						}
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-30, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -1.4, -1.2],
+							"easing": "easeOutSine"
+						}
+					}
+				},
+				"tail3": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-67.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -3, -3]
+						}
+					}
+				},
+				"tail4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-110, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -5.5, -6]
+						}
+					}
+				},
+				"tail1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, -0.5]
+						}
+					}
+				}
+			}
+		},
+		"animation.fly_walk": {
+			"animation_length": 0.25,
+			"bones": {
+				"Head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [5, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Right Arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [20, 0, 0]
+						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Left Arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"Right Leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0.5, 2]
+						}
+					}
+				},
+				"Left Leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0.5, 2]
+						}
+					}
+				},
+				"tail": {
+					"position": {
+						"vector": [0, 0.5, 2]
+					}
+				},
+				"tail2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [17.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, -2]
+						},
+						"0.25": {
+							"vector": [0, 0.8, 0]
+						}
+					}
+				},
+				"tail3": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [35, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, -2]
+						},
+						"0.25": {
+							"vector": [0, 2.2, -0.5]
+						}
+					}
+				},
+				"tail4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [70, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, -2]
+						},
+						"0.25": {
+							"vector": [0, 4.98, -1.6]
+						}
+					}
+				},
+				"tail1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, -2]
+						},
+						"0.25": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.fly_up": {
+			"animation_length": 0.25,
+			"bones": {
+				"Head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-42.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, -1]
+						}
+					}
+				},
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [5, 0, 0]
+						}
+					}
+				},
+				"Right Arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [10, 0, 0]
+						}
+					}
+				},
+				"Left Arm": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [10, 0, 0]
+						}
+					}
+				},
+				"Right Leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0.3, 1]
+						}
+					}
+				},
+				"Left Leg": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0.3, 1]
+						}
+					}
+				},
+				"tail2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -0.5, 0]
+						}
+					}
+				},
+				"tail3": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-10, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -1.2, -0.1]
+						}
+					}
+				},
+				"tail4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-20, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -2, -0.5]
+						}
+					}
+				},
+				"tail1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-7.5, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 0, 0.5]
+						}
+					}
+				}
+			}
+		},
+		"animation.fly_idle": {
+			"loop": true,
+			"bones": {
+				"Head": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Body": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Right Arm": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Left Arm": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Right Leg": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"Left Leg": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail2": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail3": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail4": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"tail1": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.fly_strafe_left": {
+			"animation_length": 0.25,
+			"bones": {
+				"Head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-3.5378, -32.2007, 11.433]
+						}
+					}
+				},
+				"Body": {
+					"rotation": {
+						"vector": [7.5, 0, 10]
+					}
+				},
+				"Right Arm": {
+					"rotation": {
+						"vector": [12.5, -2, 12.5]
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-0.1, 1, 0],
+							"easing": "easeOutQuad"
+						}
+					}
+				},
+				"Left Arm": {
+					"rotation": {
+						"vector": [12.5, -2, 12]
+					},
+					"position": {
+						"vector": [-0.5, -1, 0]
+					}
+				},
+				"Right Leg": {
+					"rotation": {
+						"vector": [17.5, 0, 12.5]
+					},
+					"position": {
+						"vector": [-2, 1, 1.4]
+					}
+				},
+				"Left Leg": {
+					"rotation": {
+						"vector": [17.5, 0, 12.5]
+					},
+					"position": {
+						"vector": [-2, 0.2, 1.5]
+					}
+				},
+				"tail": {
+					"rotation": {
+						"vector": [0, 0, 15]
+					},
+					"position": {
+						"vector": [-2, 0.5, 1]
+					}
+				},
+				"tail2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-1.0818, -2.4536, 4.9283]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-0.8, 0, 0]
+						}
+					}
+				},
+				"tail3": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [1.3985, 22.4395, 5.3645]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [-0.7, 0, -0.2]
+						}
+					}
+				},
+				"tail4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, 35, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [1, 0, -0.7]
+						}
+					}
+				},
+				"tail1": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.25": {
+							"vector": [0, -10, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.fly_strafe_right": {
+			"loop": true
+		}
+	}
+}
+
+==== ./src/main/resources/assets/dragonblockascension/geo/entity.geo.json ====
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.entity",
+        "texture_width": 64,
+        "texture_height": 64,
+        "visible_bounds_width": 2,
+        "visible_bounds_height": 2.5,
+        "visible_bounds_offset": [0, 1.25, 0]
+      },
+      "bones": [
+        {"name": "root", "pivot": [0, 0, 0]},
+        {
+          "name": "Body", "parent": "root", "pivot": [0, 24, 0],
+          "cubes": [{"origin": [-4, 12, -2], "size": [8, 12, 4], "uv": [16, 16]}]
+        },
+        {
+          "name": "Head", "parent": "Body", "pivot": [0, 24, 0],
+          "cubes": [{"origin": [-4, 24, -4], "size": [8, 8, 8], "uv": [0, 0]}]
+        },
+        {
+          "name": "Right Arm", "parent": "Body", "pivot": [-5, 22, 0],
+          "cubes": [{"origin": [-8, 12, -2], "size": [4, 12, 4], "uv": [40, 16]}]
+        },
+        {
+          "name": "Left Arm", "parent": "Body", "pivot": [5, 22, 0],
+          "cubes": [{"origin": [4, 12, -2], "size": [4, 12, 4], "uv": [32, 48]}]
+        },
+        {
+          "name": "Right Leg", "parent": "root", "pivot": [-1.9, 12, 0],
+          "cubes": [{"origin": [-4, 0, -2], "size": [4, 12, 4], "uv": [0, 16]}]
+        },
+        {
+          "name": "Left Leg", "parent": "root", "pivot": [1.9, 12, 0],
+          "cubes": [{"origin": [0, 0, -2], "size": [4, 12, 4], "uv": [16, 48]}]
+        }
+      ]
+    }
+  ]
+}
+
+
+==== ./src/main/resources/assets/dragonblockascension/geo/entity_tail.geo.json ====
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.entity_tail",
+        "texture_width": 64,
+        "texture_height": 64,
+        "visible_bounds_width": 2,
+        "visible_bounds_height": 2.5,
+        "visible_bounds_offset": [0, 1.25, 0]
+      },
+      "bones": [
+        {"name": "root", "pivot": [0, 0, 0]},
+        {
+          "name": "Body", "parent": "root", "pivot": [0, 24, 0],
+          "cubes": [{"origin": [-4, 12, -2], "size": [8, 12, 4], "uv": [16, 16]}]
+        },
+        {
+          "name": "Head", "parent": "Body", "pivot": [0, 24, 0],
+          "cubes": [{"origin": [-4, 24, -4], "size": [8, 8, 8], "uv": [0, 0]}]
+        },
+        {
+          "name": "Right Arm", "parent": "Body", "pivot": [-5, 22, 0],
+          "cubes": [{"origin": [-8, 12, -2], "size": [4, 12, 4], "uv": [40, 16]}]
+        },
+        {
+          "name": "Left Arm", "parent": "Body", "pivot": [5, 22, 0],
+          "cubes": [{"origin": [4, 12, -2], "size": [4, 12, 4], "uv": [32, 48]}]
+        },
+        {
+          "name": "Right Leg", "parent": "root", "pivot": [-1.9, 12, 0],
+          "cubes": [{"origin": [-4, 0, -2], "size": [4, 12, 4], "uv": [0, 16]}]
+        },
+        {
+          "name": "Left Leg", "parent": "root", "pivot": [1.9, 12, 0],
+          "cubes": [{"origin": [0, 0, -2], "size": [4, 12, 4], "uv": [16, 48]}]
+        },
+        {
+          "name": "tail", "parent": "root", "pivot": [0, 12, 2],
+          "cubes": [{"origin": [-1, 10, 2], "size": [2, 2, 4], "uv": [0, 32]}]
+        },
+        {
+          "name": "tail1", "parent": "tail", "pivot": [0, 11, 6],
+          "cubes": [{"origin": [-1, 9.5, 6], "size": [2, 2, 4], "uv": [0, 38]}]
+        },
+        {
+          "name": "tail2", "parent": "tail1", "pivot": [0, 10.5, 10],
+          "cubes": [{"origin": [-1, 9, 10], "size": [2, 2, 4], "uv": [0, 44]}]
+        },
+        {
+          "name": "tail3", "parent": "tail2", "pivot": [0, 10, 14],
+          "cubes": [{"origin": [-0.5, 8.5, 14], "size": [1, 1, 4], "uv": [12, 44]}]
+        },
+        {
+          "name": "tail4", "parent": "tail3", "pivot": [0, 9.5, 18],
+          "cubes": [{"origin": [-0.5, 8, 18], "size": [1, 1, 3], "uv": [20, 44]}]
+        }
+      ]
+    }
+  ]
+}
+
+
+==== ./src/main/resources/assets/dragonblockascension/shaders/core/aura_vfx.fsh ====
+#version 150
+
+// ============================================
+// AURA VFX - Custom Fragment Shader
+// ============================================
+// Creates glowing energy effect with:
+// - Animated UV distortion (flowing energy)
+// - Additive glow boost on bright areas
+// - Edge softening via alpha
+// - Flicker/pulse effect
+// ============================================
+
+uniform sampler2D Sampler0;
+uniform float GameTime;
+uniform vec4 ColorModulator;
+
+in vec2 texCoord;
+in vec4 vertColor;
+in float vHeight;
+
+out vec4 fragColor;
+
+// Simple pseudo-noise function
+float noise(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void main() {
+    float t = GameTime * 1200.0;
+    
+    // === UV DISTORTION (flowing energy) ===
+    // Distort UV based on time and position for energy flow
+    float distU = sin(texCoord.y * 8.0 + t * 0.7) * 0.03;
+    float distV = cos(texCoord.x * 6.0 + t * 0.5) * 0.02;
+    // Upward flow: offset V over time
+    float flowV = t * 0.02;
+    
+    vec2 uv = vec2(
+        texCoord.x + distU,
+        texCoord.y + distV - flowV
+    );
+    
+    // Wrap UVs
+    uv = fract(uv);
+    
+    // === SAMPLE TEXTURE ===
+    vec4 texColor = texture(Sampler0, uv);
+    
+    // Second sample with different distortion for depth
+    vec2 uv2 = vec2(
+        texCoord.x - distU * 1.5 + 0.3,
+        texCoord.y - distV * 0.8 - flowV * 1.3
+    );
+    uv2 = fract(uv2);
+    vec4 texColor2 = texture(Sampler0, uv2);
+    
+    // Blend two samples for richer energy look
+    vec4 baseColor = mix(texColor, texColor2, 0.4);
+    
+    // === APPLY VERTEX COLOR (tint + alpha from CPU) ===
+    vec4 colored = baseColor * vertColor * ColorModulator;
+    
+    // === GLOW BOOST ===
+    // Additive self-illumination on bright areas
+    float luminance = dot(colored.rgb, vec3(0.299, 0.587, 0.114));
+    colored.rgb += colored.rgb * luminance * 0.8;
+    
+    // === FLICKER ===
+    // Subtle random flicker
+    float flicker = 0.9 + noise(vec2(t * 0.1, vHeight * 10.0)) * 0.2;
+    colored.rgb *= flicker;
+    
+    // === HEIGHT-BASED EFFECTS ===
+    // Brighter at center height, dimmer at extremes
+    float heightGlow = sin(vHeight * 3.14159) * 0.3 + 0.7;
+    colored.rgb *= heightGlow;
+    
+    // === EDGE FADE ===
+    // Soften alpha at very top for smooth flame tip
+    float edgeFade = 1.0;
+    if (vHeight > 0.85) {
+        edgeFade = 1.0 - smoothstep(0.85, 1.0, vHeight);
+    }
+    colored.a *= edgeFade;
+    
+    // Discard invisible fragments
+    if (colored.a < 0.01) discard;
+    
+    fragColor = colored;
+}
+
+
+==== ./src/main/resources/assets/dragonblockascension/shaders/core/aura_vfx.json ====
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "srcalpha",
+    "dstrgb": "one",
+    "srcalpha": "one",
+    "dstalpha": "zero"
+  },
+  "vertex": "dragonblockascension:aura_vfx",
+  "fragment": "dragonblockascension:aura_vfx",
+  "attributes": [
+    "Position",
+    "UV0",
+    "Color"
+  ],
+  "samplers": [
+    { "name": "Sampler0" }
+  ],
+  "uniforms": [
+    {
+      "name": "ModelViewMat",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    },
+    {
+      "name": "ProjMat",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    },
+    {
+      "name": "ColorModulator",
+      "type": "float",
+      "count": 4,
+      "values": [1.0, 1.0, 1.0, 1.0]
+    },
+    {
+      "name": "GameTime",
+      "type": "float",
+      "count": 1,
+      "values": [0.0]
+    }
+  ]
+}
+
+
+==== ./src/main/resources/assets/dragonblockascension/shaders/core/aura_vfx.vsh ====
+#version 150
+
+// ============================================
+// AURA VFX - Custom Vertex Shader
+// ============================================
+// Handles vertex transformation with animated
+// wave distortion for organic energy movement.
+// ============================================
+
+in vec3 Position;
+in vec2 UV0;
+in vec4 Color;
+
+uniform mat4 ModelViewMat;
+uniform mat4 ProjMat;
+uniform float GameTime;  // Minecraft provides this (0..1 cycling)
+
+out vec2 texCoord;
+out vec4 vertColor;
+out float vHeight;  // Normalized height for fragment effects
+
+void main() {
+    vec3 pos = Position;
+    
+    // Normalized height (0 = feet, 1 = top)
+    vHeight = clamp(pos.y / 2.3, 0.0, 1.0);
+    
+    // Animated wave distortion on XZ plane
+    float t = GameTime * 1200.0; // Speed up GameTime
+    float waveX = sin(pos.y * 4.0 + t + pos.x * 2.0) * 0.04;
+    float waveZ = cos(pos.y * 3.5 + t * 0.8 + pos.z * 2.0) * 0.04;
+    
+    // Stronger distortion at the top (flame tips flicker more)
+    float distortionStrength = smoothstep(0.3, 1.0, vHeight) * 1.5 + 0.5;
+    pos.x += waveX * distortionStrength;
+    pos.z += waveZ * distortionStrength;
+    
+    // Slight upward drift at top vertices
+    pos.y += smoothstep(0.7, 1.0, vHeight) * sin(t * 0.5 + pos.x * 3.0) * 0.03;
+    
+    gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
+    texCoord = UV0;
+    vertColor = Color;
+}
+
+
+==== ./src/main/resources/fabric.mod.json ====
+{
+  "schemaVersion": 1,
+  "id": "dragonblockascension",
+  "version": "${version}",
+  "name": "Dragon Block Ascension",
+  "description": "A Fabric mod for Minecraft 1.20.1",
+  "authors": [
+    "Bernardo"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Bernardo-Drago/Dragon-Block-Ascension",
+    "sources": "https://github.com/Bernardo-Drago/Dragon-Block-Ascension"
+  },
+  "license": "LICENSE",
+  "icon": "assets/dragonblockascension/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bernardo.dragonblockascension.DragonBlockAscension"
+    ],
+    "client": [
+      "com.bernardo.dragonblockascension.client.DragonBlockAscensionClient"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "java": "${java_version}"
+  }
+}
+

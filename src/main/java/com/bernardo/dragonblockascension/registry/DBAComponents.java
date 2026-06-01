@@ -32,4 +32,6 @@ public final class DBAComponents {
             new Identifier("dragonblockascension", "player_transformation"),
             PlayerTransformationComponent.CODEC
         );
+
+    public static void init() {}
 }

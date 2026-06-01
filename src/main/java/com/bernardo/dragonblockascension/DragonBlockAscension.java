@@ -1,5 +1,7 @@
 package com.bernardo.dragonblockascension;
 
+import com.bernardo.dragonblockascension.network.PacketHandler;
+import com.bernardo.dragonblockascension.registry.DBAComponents;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,5 +13,7 @@ public class DragonBlockAscension implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Dragon Block Ascension carregado.");
+        DBAComponents.init();
+        PacketHandler.registerServerReceivers();
     }
 }
